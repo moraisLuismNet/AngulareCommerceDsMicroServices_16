@@ -1,0 +1,247 @@
+<div class="container my-2 px-2">
+  <div class="row mt-4 mx-3">
+    <div class="col-3">
+      <h1>{{ record.idRecord === 0 ? "Add Record" : "Edit Record" }}</h1>
+      <form #form="ngForm" (submit)="save()">
+        <div class="form-group">
+          <label for="group" class="small mb-1">Group</label>
+          <select
+            class="form-select form-control-sm"
+            [(ngModel)]="record.groupId"
+            name="group"
+            required
+            id="group"
+            style="font-size: 0.9rem"
+          >
+            <option value="">Select a Group</option>
+            <option *ngFor="let group of groups" [value]="group.idGroup">
+              {{ group.nameGroup }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="titleRecord" class="small mb-1">Record Title</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="titleRecord"
+            [(ngModel)]="record.titleRecord"
+            required
+            id="titleRecord"
+            #titleRecord="ngModel"
+            placeholder="Title Required"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!titleRecord.valid && titleRecord.touched"
+          >
+            Title Required
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="yearOfPublication" class="small mb-1">Publication</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            name="yearOfPublication"
+            [(ngModel)]="record.yearOfPublication"
+          />
+        </div>
+        <div class="form-group">
+          <label for="price" class="small mb-1">Price</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            name="price"
+            [(ngModel)]="record.price"
+            required
+            min="0"
+            id="price"
+            #price="ngModel"
+            placeholder="Price Required"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!price.valid && price.touched"
+          >
+            Price Required
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="stock" class="small mb-1">Stock</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            name="stock"
+            [(ngModel)]="record.stock"
+            required
+            min="0"
+            id="stock"
+            #stock="ngModel"
+            placeholder="Stock Required"
+          />
+          <span
+            class="form-text text-danger"
+            *ngIf="!stock.valid && stock.touched"
+          >
+            Stock Required
+          </span>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input form-control-sm"
+            type="checkbox"
+            [(ngModel)]="record.discontinued"
+            id="discontinued"
+            name="discontinued"
+          />
+          <label class="form-check-label" for="discontinued" class="small mb-1"
+            >Discontinued</label
+          >
+        </div>
+
+        <div class="form-group" *ngIf="record.photoName">
+          <label for="nameImage" class="small mb-1"
+            >Name of the selected image:</label
+          >
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            id="nameImage"
+            [(ngModel)]="record.photoName"
+            name="nameImage"
+            readonly
+          />
+        </div>
+
+        <div class="mt-3">
+          <label for="image" class="form-label" class="small mb-1"
+            >Choose image</label
+          >
+          <input
+            class="form-control form-control-sm"
+            type="file"
+            id="image"
+            (change)="onChange($event)"
+            accept="image/*"
+            #fileInput
+          />
+        </div>
+        <div class="d-flex gap-2 mt-2">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid || record.stock <= 0"
+            style="font-size: 0.85rem; padding: 0.25rem 0.75rem"
+          >
+            {{ record.idRecord === 0 ? "Add" : "Accept" }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning"
+            *ngIf="record.idRecord !== 0"
+            (click)="cancelEdition()"
+            style="font-size: 0.85rem; padding: 0.25rem 0.75rem"
+          >
+            Cancel Edition
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchText"
+          placeholder="Search by group, title or year of publication"
+          (input)="filterRecords()"
+        />
+      </div>
+      <p-table
+        [value]="filteredRecords"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="{first} of {last} of a total of {totalRecords} records"
+        [rowsPerPageOptions]="[5, 10]"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="font-size: 15px" pSortableColumn="groupName">
+              Group <p-sortIcon field="groupName"></p-sortIcon>
+            </th>
+            <th></th>
+            <th style="font-size: 15px" pSortableColumn="titleRecord">
+              Title <p-sortIcon field="titleRecord"></p-sortIcon>
+            </th>
+            <th style="font-size: 15px" pSortableColumn="yearOfPublication">
+              Publication <p-sortIcon field="yearOfPublication"></p-sortIcon>
+            </th>
+            <th style="font-size: 15px">Price</th>
+            <th style="font-size: 15px" pSortableColumn="stock">
+              Stock <p-sortIcon field="stock"></p-sortIcon>
+            </th>
+            <th style="font-size: 15px" pSortableColumn="discontinued">
+              Discontinued <p-sortIcon field="discontinued"></p-sortIcon>
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-record>
+          <tr>
+            <td style="font-size: 15px">{{ record.groupName }}</td>
+            <td><img src="{{ record.imageRecord }}" width="80" /></td>
+            <td style="font-size: 15px">{{ record.titleRecord }}</td>
+            <td style="font-size: 15px">{{ record.yearOfPublication }}</td>
+            <td style="font-size: 15px">
+              {{ record.price | number : "1.2-2" }} €
+            </td>
+            <td style="font-size: 15px">{{ record.stock }}</td>
+            <td style="font-size: 15px">
+              {{ record.discontinued ? "Yes" : "No" }}
+            </td>
+            <td>
+              <div style="display: flex; gap: 0.2rem">
+                <p-button
+                  icon="pi pi-pencil"
+                  (click)="edit(record)"
+                  styleClass="p-button-rounded p-button-warning"
+                ></p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  (click)="confirmDelete(record)"
+                  styleClass="p-button-rounded p-button-danger"
+                ></p-button>
+                <p-button
+                  icon="pi pi-eye"
+                  (click)="showImage(record)"
+                  [disabled]="!record.imageRecord"
+                  styleClass="p-button-rounded p-button-primary"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-confirmDialog></p-confirmDialog>
+      <p-dialog
+        header="Alert"
+        [(visible)]="visibleError"
+        [style]="{ width: '50vw' }"
+      >
+        <p>{{ errorMessage }}</p>
+      </p-dialog>
+      <p-dialog [(visible)]="visiblePhoto" [style]="{ width: '20vw' }">
+        <ng-template pTemplate="header">
+          <span class="header-text"
+            >{{ record.groupName }}<br />{{ record.titleRecord }}</span
+          >
+        </ng-template>
+        <img [src]="photo" alt="Photo of the record" class="img-fluid" />
+      </p-dialog>
+    </div>
+  </div>
+</div>

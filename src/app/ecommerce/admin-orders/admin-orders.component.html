@@ -1,0 +1,95 @@
+<div class="container mt-4">
+  <h2>Orders Management</h2>
+
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="searchText"
+      placeholder="Search by email, payment method or date"
+      (input)="onSearchChange()"
+    />
+  </div>
+
+  <p-table
+    *ngIf="!loading && filteredOrders.length > 0"
+    [value]="filteredOrders"
+    [paginator]="true"
+    [rows]="5"
+    [showCurrentPageReport]="true"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
+    [rowsPerPageOptions]="[5, 10]"
+    dataKey="idOrder"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Order ID</th>
+        <th>Email</th>
+        <th>Date</th>
+        <th>Payment Method</th>
+        <th>Total</th>
+        <th>Order Details</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-order>
+      <tr>
+        <td>{{ order.idOrder }}</td>
+        <td>{{ order.userEmail }}</td>
+        <td>{{ order.orderDate | date : "medium" }}</td>
+        <td>{{ order.paymentMethod }}</td>
+        <td>{{ order.total | number : "1.2-2" }} €</td>
+        <td class="align-right-cell">
+          <button
+            class="btn btn-sm"
+            [ngClass]="{
+              'btn-info': !isOrderExpanded(order.idOrder),
+              'btn-secondary': isOrderExpanded(order.idOrder)
+            }"
+            (click)="toggleOrderDetails(order.idOrder)"
+          >
+            <i
+              class="pi"
+              [ngClass]="{
+                'pi-chevron-down': !isOrderExpanded(order.idOrder),
+                'pi-chevron-up': isOrderExpanded(order.idOrder)
+              }"
+            ></i>
+          </button>
+        </td>
+      </tr>
+      <tr [pRowToggler]="order" *ngIf="isOrderExpanded(order.idOrder)">
+        <td colspan="6" class="p-0">
+          <div class="order-details-container p-3">
+            <h5 class="mb-3">Order Details</h5>
+            <h6>Records:</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Title</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of order.orderDetails">
+                    <td>{{ item.recordTitle }}</td>
+                    <td>{{ item.price | number : "1.2-2" }} €</td>
+                    <td>{{ item.amount }}</td>
+                    <td>{{ item.total | number : "1.2-2" }} €</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <div *ngIf="!loading && filteredOrders.length === 0" class="alert alert-info">
+    No orders found matching your criteria
+  </div>
+</div>

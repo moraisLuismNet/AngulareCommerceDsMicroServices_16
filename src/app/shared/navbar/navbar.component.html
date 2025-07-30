@@ -1,0 +1,93 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Admin navigation links -->
+      <ul *ngIf="isAdmin()" class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/genres">MUSIC GENRES</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/groups">GROUPS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/records">RECORDS</a>
+        </li>
+        <li class="nav-item" *ngIf="!isListGroupsPage()">
+          <a class="nav-link" routerLink="/listgroups">MUSIC GROUPS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/carts">CARTS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/admin-orders">ORDERS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ecommerce/users">USERS</a>
+        </li>
+      </ul>
+
+      <!-- Regular user navigation links -->
+      <ul *ngIf="emailUser && !isAdmin()" class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+        style="--bs-scroll-height: 100px">
+        <!-- Only show the MUSIC GROUPS link when not already on that page -->
+        <li class="nav-item" *ngIf="!isListGroupsPage()">
+          <a class="nav-link" routerLink="/listgroups">MUSIC GROUPS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/orders">ORDERS</a>
+        </li>
+      </ul>
+
+      <!-- User section -->
+      <ul class="navbar-nav">
+        <li *ngIf="emailUser" class="me-3">Welcome, {{ emailUser }}</li>
+        <li *ngIf="isAdmin()" class="me-3">ADMIN</li>
+
+        <ng-container *ngIf="emailUser; else unauthenticated">
+          <li>
+            <button class="btn btn-outline-primary me-2" (click)="logout()">
+              Log out
+            </button>
+          </li>
+        </ng-container>
+        <ng-template #unauthenticated>
+          <ng-container *ngIf="!isLoginPage(); else loginPageLink">
+            <li>
+              <button class="btn btn-outline-primary me-2" routerLink="/login">
+                Log in</button>
+            </li>
+          </ng-container>
+
+          <ng-template #loginPageLink>
+            <li>
+              <button class="btn btn-outline-primary me-2" routerLink="/listgroups">
+                View groups
+              </button>
+            </li>
+          </ng-template>
+        </ng-template>
+      </ul>
+
+      <!-- Shopping cart icon and total -->
+      <div *ngIf="emailUser && !isAdmin()" class="me-3 d-flex align-items-center">
+        <div class="cart-icon-container me-2">
+          <i class="pi pi-shopping-cart" [ngClass]="{ 'text-muted': !cartEnabled }"
+            [routerLink]="cartEnabled ? '/cart-details' : null" [ngStyle]="{
+              'font-size': '1.5em',
+              cursor: cartEnabled ? 'pointer' : 'not-allowed'
+            }"></i>
+          <span *ngIf="cartItemsCount > 0" class="badge bg-primary">{{
+            cartItemsCount
+            }}</span>
+        </div>
+        <div *ngIf="cartTotal > 0" class="cart-total me-2">
+          <strong>{{ cartTotal | number : "1.2-2" }}€</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
