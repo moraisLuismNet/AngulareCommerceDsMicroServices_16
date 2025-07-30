@@ -107,7 +107,12 @@ AngulareCommerceDsMicroServices_16/
 
 ```javascript
 export const environment = {
-  urlAPI: 'https://localhost:7190/api/',
+  // API Base URLs
+  apiUrl: {
+    userService: 'https://localhost:7170/api/',
+    cdService: 'https://localhost:7262/api/',
+    shoppingService: 'https://localhost:7273/api/'
+  },
 };
 
 ```
