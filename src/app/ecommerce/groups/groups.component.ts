@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { IGroup } from '../ecommerce.interface';
@@ -14,6 +14,9 @@ import { GenresService } from '../services/genres.service';
 export class GroupsComponent implements OnInit {
   @ViewChild('form') form!: NgForm;
   @ViewChild('fileInput') fileInput!: ElementRef;
+  @ViewChild('groupsTable') groupsTable!: ElementRef<HTMLTableElement>;
+  private genresLoaded = false;
+  private pendingEditGroup: IGroup | null = null;
   visibleError = false;
   errorMessage = '';
   groups: IGroup[] = [];
@@ -36,6 +39,7 @@ export class GroupsComponent implements OnInit {
 
   genres: any[] = [];
   constructor(
+    private cdr: ChangeDetectorRef,
     private groupsService: GroupsService,
     private genresService: GenresService,
     private confirmationService: ConfirmationService
@@ -43,7 +47,10 @@ export class GroupsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getGroups();
-    this.getGenres();
+    this.getGenres().then(() => {
+    }).catch(err => {
+      console.error('Failed to load genres:', err);
+    });
   }
 
   getGroups() {
@@ -63,16 +70,39 @@ export class GroupsComponent implements OnInit {
   }
 
   getGenres() {
-    this.genresService.getGenres().subscribe({
-      next: (data: any) => {
-        // Extract the `$values` property from the response
-        const genresArray = data.$values || []; // If `$values` does not exist, use an empty array
-        this.genres = Array.isArray(genresArray) ? genresArray : [];
-      },
-      error: (err) => {
-        this.visibleError = true;
-        this.controlError(err);
-      },
+    return new Promise<void>((resolve, reject) => {
+      this.genresService.getGenres().subscribe({
+        next: (data: any) => {
+          // Handle different response formats
+          let genresArray = [];
+          if (Array.isArray(data)) {
+            genresArray = data;
+          } else if (data && Array.isArray(data.$values)) {
+            genresArray = data.$values;
+          } else if (data && data.data && Array.isArray(data.data)) {
+            genresArray = data.data;
+          }
+          
+          this.genres = genresArray;
+          this.genresLoaded = true;
+          
+          // If there was a pending edit, process it now
+          if (this.pendingEditGroup) {
+            this.processEdit(this.pendingEditGroup);
+            this.pendingEditGroup = null;
+          }
+          
+          this.cdr.detectChanges();
+          resolve();
+        },
+        error: (err) => {
+          console.error('Error loading genres:', err);
+          this.visibleError = true;
+          this.errorMessage = 'Failed to load music genres. Please try again.';
+          this.controlError(err);
+          reject(err);
+        },
+      });
     });
   }
 
@@ -116,11 +146,69 @@ export class GroupsComponent implements OnInit {
     }
   }
 
-  edit(group: IGroup) {
+  async edit(group: IGroup) {
+    // If genres aren't loaded yet, store the group and wait for them to load
+    if (!this.genresLoaded) {
+      this.pendingEditGroup = group;
+      try {
+        await this.getGenres();
+      } catch (error) {
+        console.error('Error loading genres:', error);
+      }
+      return;
+    }
+    
+    this.processEdit(group);
+  }
+  
+  private processEdit(group: IGroup) {
+    // Create a deep copy of the group to avoid reference issues
     this.group = { ...group };
+    
+    // Set the photo name if image exists
     this.group.photoName = group.imageGroup
       ? this.extractNameImage(group.imageGroup)
       : '';
+    
+    // Make sure musicGenreId is set to the correct value
+    if (group.musicGenreId && this.genres.length > 0) {
+      // Verify the genre exists in our list
+      const foundGenre = this.genres.find(g => g.idMusicGenre === group.musicGenreId);
+      if (foundGenre) {
+        this.group.musicGenreId = foundGenre.idMusicGenre;
+        this.group.musicGenreName = foundGenre.nameMusicGenre;
+      } else {
+        // Try to find by name if ID doesn't match
+        this.tryFindGenreByName(group);
+      }
+    } else if (this.genres.length === 0) {
+      // If no genres are loaded, try to reload them
+      this.getGenres().then(() => {
+        this.processEdit(group);
+      });
+      return;
+    } else {
+      // Try to find by name if no ID is provided
+      this.tryFindGenreByName(group);
+    }
+
+    // Force change detection to update the view
+    this.cdr.detectChanges();
+  }
+  
+  private tryFindGenreByName(group: IGroup) {
+    if (group.musicGenreName) {
+      const foundGenre = this.genres.find(g => 
+        g.nameMusicGenre?.toLowerCase() === group.musicGenreName?.toLowerCase()
+      );
+      
+      if (foundGenre) {
+        this.group.musicGenreId = foundGenre.idMusicGenre;
+        this.group.musicGenreName = foundGenre.nameMusicGenre;
+      } else {
+        console.warn(`Genre with name '${group.musicGenreName}' not found`);
+      }
+    }
   }
 
   extractNameImage(url: string): string {
