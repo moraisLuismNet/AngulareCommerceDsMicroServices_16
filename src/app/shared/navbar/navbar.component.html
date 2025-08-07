@@ -7,25 +7,25 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Admin navigation links -->
       <ul *ngIf="isAdmin()" class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px">
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isGenresPage()">
           <a class="nav-link" routerLink="/ecommerce/genres">MUSIC GENRES</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isGroupsPage()">
           <a class="nav-link" routerLink="/ecommerce/groups">GROUPS</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isRecordsPage()">
           <a class="nav-link" routerLink="/ecommerce/records">RECORDS</a>
         </li>
         <li class="nav-item" *ngIf="!isListGroupsPage()">
           <a class="nav-link" routerLink="/listgroups">MUSIC GROUPS</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isCartsPage()">
           <a class="nav-link" routerLink="/ecommerce/carts">CARTS</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isOrdersPage()">
           <a class="nav-link" routerLink="/ecommerce/admin-orders">ORDERS</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isUsersPage()">
           <a class="nav-link" routerLink="/ecommerce/users">USERS</a>
         </li>
       </ul>
@@ -37,7 +37,7 @@
         <li class="nav-item" *ngIf="!isListGroupsPage()">
           <a class="nav-link" routerLink="/listgroups">MUSIC GROUPS</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isOrdersPage()">
           <a class="nav-link" routerLink="/orders">ORDERS</a>
         </li>
       </ul>

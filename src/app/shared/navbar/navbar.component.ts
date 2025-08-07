@@ -108,7 +108,32 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   isListGroupsPage(): boolean {
-    return this.currentRoute.includes('/listgroups');
+    return this.currentRoute.includes('/listgroups') || this.currentRoute === '/';
+  }
+
+  isOrdersPage(): boolean {
+    const isOrdersPage = this.currentRoute.includes('/ecommerce/admin-orders') || this.currentRoute.includes('/orders');
+    return isOrdersPage;
+  }
+
+  isGenresPage(): boolean {
+    return this.currentRoute.includes('/ecommerce/genres') || this.currentRoute === '/genres';
+  }
+
+  isGroupsPage(): boolean {
+    return this.currentRoute.includes('/ecommerce/groups') || this.currentRoute === '/groups';
+  }
+
+  isRecordsPage(): boolean {
+    return this.currentRoute.includes('/ecommerce/records') || this.currentRoute === '/records';
+  }
+
+  isCartsPage(): boolean {
+    return this.currentRoute.includes('/ecommerce/carts') || this.currentRoute === '/carts';
+  }
+
+  isUsersPage(): boolean {
+    return this.currentRoute.includes('/ecommerce/users') || this.currentRoute === '/users';
   }
 
   logout(): void {

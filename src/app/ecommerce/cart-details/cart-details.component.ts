@@ -147,7 +147,7 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
               groupName: groupName,
               price: detail.price || 0,
               total: (detail.price || 0) * (detail.amount || 0),
-              imageRecord: detail.imageRecord || detail.record?.imageRecord || 'assets/images/placeholder.png',
+              imageRecord: detail.imageRecord || detail.record?.imageRecord || 'assets/img/placeholder.png',
               record: detail.record
             };
           });
@@ -191,7 +191,7 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
               groupName: record.groupName || record.nameGroup || 'N/A',
               recordTitle: record.titleRecord || 'No Title',
               price: record.price || 0,
-              imageRecord: record.imageRecord || record.photo || 'assets/images/placeholder.png'
+              imageRecord: record.imageRecord || record.photo || 'assets/img/placeholder.png'
             } as ExtendedCartDetail;
             
             // Update the array immutably

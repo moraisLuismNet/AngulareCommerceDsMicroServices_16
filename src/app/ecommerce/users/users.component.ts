@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { IUser } from "../ecommerce.interface";
 import { UsersService } from "../services/users.service";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -19,7 +20,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private usersService: UsersService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -52,9 +54,14 @@ export class UsersComponent implements OnInit {
     return "Error loading users. Please try again..";
   }
 
+  getDeleteMessage(email: string): SafeHtml {
+    const message = `Are you sure you want to delete the user "${email}"?`;
+    return this.sanitizer.bypassSecurityTrustHtml(message);
+  }
+
   confirmDelete(email: string): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete the user "${email}"?<br/><span class="delete-warning" style="color: #dc3545; font-weight: bold;">This action cannot be undone!</span>`,
+      message: this.getDeleteMessage(email) as string,
       header: "Delete User",
       icon: "pi pi-exclamation-triangle",
       acceptButtonStyleClass: "p-button-danger",
