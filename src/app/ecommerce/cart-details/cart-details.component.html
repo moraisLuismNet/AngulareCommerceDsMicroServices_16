@@ -32,7 +32,7 @@
             <td><img [src]="detail.imageRecord" width="80" /></td>
           </ng-container>
           <td>{{ detail.groupName || "N/A" }}</td>
-          <td>{{ detail.titleRecord || 'No title available' }}</td>
+          <td>{{ detail.recordTitle || detail.titleRecord || 'No title available' }}</td>
           <td>{{ detail.amount }}</td>
           <td>{{ detail.price | number : "1.2-2" }} €</td>
           <td>{{ detail.total | number : "1.2-2" }} €</td>
@@ -45,8 +45,8 @@
                   (click)="addToCart(detail)"
                   styleClass="p-button-rounded p-button-secondary"
                   [disabled]="
-                    !detail.stock ||
-                    detail.amount >= detail.stock ||
+                    detail.stock <= 0 ||
+                    (detail.stock > 0 && detail.amount > detail.stock) ||
                     isAddingToCart
                   "
                 ></p-button>
@@ -58,7 +58,7 @@
                   [disabled]="!detail.amount"
                 ></p-button>
               </div>
-            </td>
+          </td>
           </ng-container>
         </tr>
       </ng-template>

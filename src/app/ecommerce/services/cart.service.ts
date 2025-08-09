@@ -383,9 +383,7 @@ export class CartService implements OnDestroy {
     // Ensure we're in the Angular zone to trigger change detection
     if (this.cartItemCountSubject.value !== totalItems) {
       this.cartItemCountSubject.next(totalItems);
-    } else {
-      console.log('[CartService] Cart item count unchanged, not emitting');
-    }
+    } 
   }
 
   private calculateAndUpdateLocalTotal(): void {
