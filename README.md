@@ -1,7 +1,7 @@
 ## AngulareCommerceDsMicroServices_16
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.14.
 
-**AngulareCommerceDsMicroServices_16** is an e-commerce application developed with Angular. Its main purpose is to allow users to browse and purchase albums from different musical groups and genres, as well as manage their orders and shopping carts. The application has two main areas of functionality: one for general users and one for administrators. For general users (Registration and Login, Product Navigation, Shopping Cart, and Order Management). For administrators (Genre Management, Group Management, Album Management, User Management, Order Management (Admin), and Cart Management (Admin). This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.14.
+**AngulareCommerceDsMicroServices_16** is an e-commerce application developed with Angular. Its main purpose is to allow users to browse and purchase albums from different musical groups and genres, as well as manage their orders and shopping carts. The application has two main areas of functionality: one for general users and one for administrators. For general users (Registration and Login, Product Navigation, Shopping Cart, and Order Management). For administrators (Genre Management, Group Management, Album Management, User Management, Order Management (Admin), and Cart Management (Admin). 
 
 ![AngulareCommderceDs](img/UML.png)
 
