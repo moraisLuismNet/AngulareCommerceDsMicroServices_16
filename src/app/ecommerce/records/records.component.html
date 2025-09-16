@@ -13,8 +13,8 @@
             id="group"
             style="font-size: 0.9rem"
           >
-            <option value="">Select a Group</option>
-            <option *ngFor="let group of groups" [value]="group.idGroup">
+            <option [ngValue]="null">Select a Group</option>
+            <option *ngFor="let group of groups" [ngValue]="group.idGroup">
               {{ group.nameGroup }}
             </option>
           </select>
@@ -193,7 +193,7 @@
         <ng-template pTemplate="body" let-record>
           <tr>
             <td style="font-size: 15px">{{ record.groupName }}</td>
-            <td><img src="{{ record.imageRecord }}" width="80" /></td>
+            <td><img [src]="record.imageRecord || 'https://i.imgur.com/neXme88.png'" width="80" [alt]="record.titleRecord || 'Record image'" /></td>
             <td style="font-size: 15px">{{ record.titleRecord }}</td>
             <td style="font-size: 15px">{{ record.yearOfPublication }}</td>
             <td style="font-size: 15px">

@@ -29,7 +29,7 @@
       <ng-template pTemplate="body" let-detail>
         <tr>
           <ng-container *ngIf="!isViewingAsAdmin">
-            <td><img [src]="detail.imageRecord" width="80" /></td>
+            <td><img [src]="detail.imageRecord || 'https://i.imgur.com/neXme88.png'" width="80" [alt]="detail.recordTitle || detail.titleRecord || 'Record image'" /></td>
           </ng-container>
           <td>{{ detail.groupName || "N/A" }}</td>
           <td>{{ detail.recordTitle || detail.titleRecord || 'No title available' }}</td>
@@ -45,10 +45,13 @@
                   (click)="addToCart(detail)"
                   styleClass="p-button-rounded p-button-secondary"
                   [disabled]="
+                    !detail || 
+                    detail.stock == null || 
                     detail.stock <= 0 ||
-                    (detail.stock > 0 && detail.amount > detail.stock) ||
                     isAddingToCart
                   "
+                  [title]="'Stock: ' + detail.stock + ' | Amount: ' + detail.amount + ' | Disabled: ' + 
+                    (!detail || detail.stock == null || detail.stock <= 0 || isAddingToCart)"
                 ></p-button>
                 <p-button
                   label="Remove"

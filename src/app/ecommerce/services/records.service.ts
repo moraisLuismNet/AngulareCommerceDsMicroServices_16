@@ -120,36 +120,50 @@ export class RecordsService {
   }
 
   addRecord(record: IRecord): Observable<IRecord> {
-    const headers = this.getHeaders();
+    const token = this.authGuard.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+      // Let the browser set the Content-Type with the correct boundary
+    });
+    
     const formData = new FormData();
     formData.append("titleRecord", record.titleRecord);
+    
     if (record.yearOfPublication !== null) {
       formData.append("yearOfPublication", record.yearOfPublication.toString());
     } else {
       formData.append("yearOfPublication", "");
     }
-    formData.append("photo", record.photo!);
+    
+    if (record.photo) {
+      formData.append("photo", record.photo);
+    }
+    
     formData.append("price", record.price.toString());
     formData.append("stock", record.stock.toString());
     formData.append("discontinued", record.discontinued ? "true" : "false");
-    formData.append("groupId", record.groupId?.toString()!);
+    
+    if (record.groupId !== null && record.groupId !== undefined) {
+      formData.append("groupId", record.groupId.toString());
+    }
 
-    return this.http
-      .post<any>(`${this.baseUrl}records`, formData, {
-        headers,
-      })
+    return this.http.post<IRecord>(`${this.baseUrl}records`, formData, { headers })
       .pipe(
-        map((response) => {
-          const newRecord = response.$values || {};
-          return newRecord;
+        map((response: any) => {
+          // Handle different response formats
+          const newRecord = response.$values || response || {};
+          return newRecord as IRecord;
         }),
         tap((newRecord: IRecord) => {
-          this.stockService.notifyStockUpdate(
-            newRecord.idRecord,
-            newRecord.stock
-          );
+          if (newRecord.idRecord && newRecord.stock !== undefined) {
+            this.stockService.notifyStockUpdate(newRecord.idRecord, newRecord.stock);
+          }
+        }),
+        catchError(error => {
+          console.error('Error in addRecord:', error);
+          return throwError(() => error);
         })
-      );
+      );  
   }
 
   updateRecord(record: IRecord): Observable<IRecord> {

@@ -23,7 +23,6 @@ import { AuthGuard } from "src/app/guards/auth-guard.service";
 @Component({
   selector: "app-listrecords",
   templateUrl: "./listrecords.component.html",
-  styleUrls: ["./listrecords.component.css"],
   providers: [ConfirmationService],
 })
 export class ListrecordsComponent implements OnInit, OnDestroy {

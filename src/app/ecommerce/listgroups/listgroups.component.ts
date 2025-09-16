@@ -10,7 +10,6 @@ import { GenresService } from '../services/genres.service';
 @Component({
   selector: 'app-listgroups',
   templateUrl: './listgroups.component.html',
-  styleUrls: ['./listgroups.component.css'],
   providers: [ConfirmationService],
 })
 export class ListgroupsComponent implements OnInit {

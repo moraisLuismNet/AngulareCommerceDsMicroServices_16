@@ -6,8 +6,7 @@ import { IOrder } from '../ecommerce.interface';
 
 @Component({
   selector: 'app-orders',
-  templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.css'],
+  templateUrl: './orders.component.html'
 })
 export class OrdersComponent implements OnInit, OnDestroy {
   orders: IOrder[] = [];

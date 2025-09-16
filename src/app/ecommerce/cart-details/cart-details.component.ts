@@ -147,7 +147,7 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
               groupName: groupName,
               price: detail.price || 0,
               total: (detail.price || 0) * (detail.amount || 0),
-              imageRecord: detail.imageRecord || detail.record?.imageRecord || 'assets/img/placeholder.png',
+              imageRecord: detail.imageRecord || detail.record?.imageRecord || 'https://i.imgur.com/neXme88.png',
               record: detail.record
             };
           });
@@ -185,13 +185,21 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
           );
           
           if (index !== -1) {
+            // Ensure stock is a number and not null/undefined
+            const currentDetail = this.filteredCartDetails[index];
+            const currentStock = typeof record.stock === 'number' ? record.stock : 
+                               (typeof currentDetail.stock === 'number' ? 
+                               currentDetail.stock : 0);
+            const currentAmount = currentDetail.amount || 0;
+            
             const updatedDetail = {
-              ...this.filteredCartDetails[index],
-              stock: record.stock,
+              ...currentDetail,
+              stock: currentStock,
               groupName: record.groupName || record.nameGroup || 'N/A',
               recordTitle: record.titleRecord || 'No Title',
               price: record.price || 0,
-              imageRecord: record.imageRecord || record.photo || 'assets/img/placeholder.png'
+              imageRecord: record.imageRecord || record.photo || 'https://i.imgur.com/neXme88.png',
+              amount: currentAmount
             } as ExtendedCartDetail;
             
             // Update the array immutably
@@ -240,14 +248,26 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
       const itemIndex = this.filteredCartDetails.findIndex(
         (d) => d.recordId === detail.recordId
       );
+      
       if (itemIndex !== -1) {
+        const currentItem = this.filteredCartDetails[itemIndex];
+        const currentAmount = typeof currentItem.amount === 'number' ? currentItem.amount : 0;
+        const currentStock = typeof currentItem.stock === 'number' ? currentItem.stock : 0;
+        
         const updatedItem = {
-          ...this.filteredCartDetails[itemIndex],
-          amount: (this.filteredCartDetails[itemIndex].amount || 0) + 1,
-          stock:
-            updatedDetail?.stock || this.filteredCartDetails[itemIndex].stock,
+          ...currentItem,
+          amount: currentAmount + 1,
+          stock: updatedDetail?.stock !== undefined && updatedDetail.stock !== null ? 
+                 updatedDetail.stock : 
+                 (currentStock > 0 ? currentStock - 1 : 0)
         };
-        this.filteredCartDetails[itemIndex] = updatedItem;
+        
+        this.filteredCartDetails = [
+          ...this.filteredCartDetails.slice(0, itemIndex),
+          updatedItem,
+          ...this.filteredCartDetails.slice(itemIndex + 1)
+        ];
+        
         this.updateCartTotals();
       }
 

@@ -8,7 +8,6 @@ import { GenresService } from '../services/genres.service';
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.component.html',
-  styleUrls: ['./groups.component.css'],
   providers: [ConfirmationService],
 })
 export class GroupsComponent implements OnInit {
@@ -32,7 +31,7 @@ export class GroupsComponent implements OnInit {
     nameGroup: '',
     imageGroup: null,
     photo: null,
-    musicGenreId: 0,
+    musicGenreId: null,
     musicGenreName: '',
     musicGenre: '',
   };

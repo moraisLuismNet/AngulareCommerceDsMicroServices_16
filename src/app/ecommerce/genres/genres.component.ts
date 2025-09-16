@@ -7,7 +7,6 @@ import { GenresService } from '../services/genres.service';
 @Component({
   selector: 'app-genres',
   templateUrl: './genres.component.html',
-  styleUrls: ['./genres.component.css'],
   providers: [ConfirmationService],
 })
 export class GenresComponent implements OnInit {
